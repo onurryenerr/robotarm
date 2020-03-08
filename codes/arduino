@@ -1,0 +1,67 @@
+
+
+#include <Servo.h>
+ 
+Servo myservobir;  // create servo object to control a servo
+// twelve servo objects can be created on most boards
+Servo myservoiki;
+int pos1,pos2 = 0;    // variable to store the servo position
+ 
+void setup() {
+  myservobir.attach(2);  // attaches the servo on pin 2 to the servo object
+
+  myservoiki.attach(4);
+  
+  myservobir.write(pos1);
+  myservoiki.write(pos2);
+  delay(3000);
+  pos1=pos2=30;
+  myservobir.write(pos1);
+  myservoiki.write(pos2);
+  delay(2000);
+}
+ 
+void loop() {
+
+writemotor1(120);
+writemotor2(60);
+
+}
+
+void writemotor1 (int angle) {
+  static int duration=1000/(angle-pos1);
+  static int counter=0;
+  static long curtime=millis();
+  
+  if( millis()-curtime>duration){
+    if ( pos1<angle){
+      pos1+=1;
+      myservobir.write(pos1);
+    }
+    if (pos1>angle){
+      pos1-=1;
+      myservobir.write(pos1);
+     }
+     curtime=millis();
+   }
+  
+}
+
+void writemotor2 (int angle) {
+  static int duration=1000/(angle-pos2);
+  static int counter=0;
+  static long curtime=millis();
+  
+  if (millis()-curtime>duration){
+    if ( pos2<angle){
+      pos2+=1;
+      myservoiki.write(pos2);
+    }
+    if (pos2>angle){
+      pos2-=1;
+      myservoiki.write(pos2);
+     }
+     curtime=millis();
+   }
+  
+}
