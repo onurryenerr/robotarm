@@ -4,7 +4,7 @@
  
 Servo myservo[2];  // create servo object to control a servo
 short int pos[2] =  { 0 };    // variable to store the servo position
-finishFlag = 1; // flag to save last command execution status
+short int finishFlag = 1; // flag to save last command execution status
 int duration; // variable to store delays between position
 long curtime=millis();; // variable to store last command execution time
  
@@ -22,7 +22,7 @@ void setup() {
 void loop() {
 
 writemotor(0,120);
-writemotor2(1,60);
+writemotor(1,60);
 
 }
 
