@@ -19,13 +19,6 @@ void setup() {
 
 }
  
-void loop() {
-
-writemotor(0,120);
-writemotor(1,60);
-
-}
-
 void writemotor (short int motor, short int angle) {
   if (finishFlag) {
     duration=1000/(angle-pos[motor]);
@@ -47,4 +40,14 @@ void writemotor (short int motor, short int angle) {
    
    else
      finishFlag = 1;
+}
+
+
+void loop() {
+writemotor(0,100);
+writemotor(1,150);
+//writemotor(0,positions[j]);
+//writemotor(1,positions[j]);
+if (finishFlag)
+  j++;
 }
