@@ -4,9 +4,9 @@
  
 Servo myservo[2];  // create servo object to control a servo
 short int pos[2] =  { 0 };    // variable to store the servo position
-short int finishFlag = 1; // flag to save last command execution status
-int duration; // variable to store delays between position
-long curtime=millis();; // variable to store last command execution time
+short int finishFlag[2] = {2,2}; // flag to save last command execution status. 0 - busy, 1 - done, 2 - ready
+int duration[2]; // variable to store delays between position
+long curtime[2]= {0,0}; // variable to store last command execution time
  
 void setup() {
   myservo[0].attach(2);  // attaches the servo on pin 2 to the servo object
@@ -19,27 +19,29 @@ void setup() {
 
 }
  
+ 
 void writemotor (short int motor, short int angle) {
-  if (finishFlag) {
-    duration=1000/(angle-pos[motor]);
-    finishFlag = 0;
+  if (finishFlag[motor]==2) {
+    duration[motor]=1000/(angle-pos[motor]);
+    finishFlag[motor] = 0;
   }
-  
-  if( millis()-curtime>duration){
-    if (pos[motor]<angle){
-      pos[motor]+=1;
-      myservo[motor].write(pos[motor]);
-    }
     
-   else if (pos[motor]>angle){
-      pos[motor]-=1;
-      myservo[motor].write(pos[motor]);
+  if( (finishFlag[motor]==0) && (millis()-curtime[motor]>duration[motor])){
+     if (pos[motor]<angle){
+       pos[motor]+=1;
+       myservo[motor].write(pos[motor]);
+       curtime[motor]=millis();
      }
-    curtime=millis();
+    
+     else if (pos[motor]>angle){
+       pos[motor]-=1;
+       myservo[motor].write(pos[motor]);
+       curtime[motor]=millis();
+     }
+     
+     else
+      finishFlag[motor]= 1;          
    }
-   
-   else
-     finishFlag = 1;
 }
 
 
@@ -48,6 +50,9 @@ writemotor(0,100);
 writemotor(1,150);
 //writemotor(0,positions[j]);
 //writemotor(1,positions[j]);
-if (finishFlag)
-  j++;
+//  if (finishFlag[0] && finishFlag[1]) {
+//    j++;
+//    finishFlag[0] = 2;
+//    finishFlag[1] = 2;
+//  }
 }
