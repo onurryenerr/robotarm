@@ -2,66 +2,49 @@
 //hadi bakalim
 #include <Servo.h>
  
-Servo myservobir;  // create servo object to control a servo
-// twelve servo objects can be created on most boards
-Servo myservoiki;
-int pos1,pos2 = 0;    // variable to store the servo position
+Servo myservo[2];  // create servo object to control a servo
+short int pos[2] =  { 0 };    // variable to store the servo position
+finishFlag = 1; // flag to save last command execution status
+int duration; // variable to store delays between position
+long curtime=millis();; // variable to store last command execution time
  
 void setup() {
-  myservobir.attach(2);  // attaches the servo on pin 2 to the servo object
-
-  myservoiki.attach(4);
+  myservo[0].attach(2);  // attaches the servo on pin 2 to the servo object
+  myservo[1].attach(4);
   
-  myservobir.write(pos1);
-  myservoiki.write(pos2);
-  delay(3000);
-  pos1=pos2=30;
-  myservobir.write(pos1);
-  myservoiki.write(pos2);
-  delay(2000);
+  myservo[0].write(pos[0]);
+  myservo[1].write(pos[1]);
+//  delay(3000);
+//  myservo[0].write(pos1);
+
 }
  
 void loop() {
 
-writemotor1(120);
-writemotor2(60);
+writemotor(0,120);
+writemotor2(1,60);
 
 }
 
-void writemotor1 (int angle) {
-  static int duration=1000/(angle-pos1);
-  static int counter=0;
-  static long curtime=millis();
+void writemotor (short int motor, short int angle) {
+  if (finishFlag) {
+    duration=1000/(angle-pos[motor]);
+    finishFlag = 0;
+  }
   
   if( millis()-curtime>duration){
-    if ( pos1<angle){
-      pos1+=1;
-      myservobir.write(pos1);
+    if (pos[motor]<angle){
+      pos[motor]+=1;
+      myservo[motor].write(pos[motor]);
     }
-    if (pos1>angle){
-      pos1-=1;
-      myservobir.write(pos1);
+    
+   else if (pos[motor]>angle){
+      pos[motor]-=1;
+      myservo[motor].write(pos[motor]);
      }
-     curtime=millis();
+    curtime=millis();
    }
-  
-}
-
-void writemotor2 (int angle) {
-  static int duration=1000/(angle-pos2);
-  static int counter=0;
-  static long curtime=millis();
-  
-  if (millis()-curtime>duration){
-    if ( pos2<angle){
-      pos2+=1;
-      myservoiki.write(pos2);
-    }
-    if (pos2>angle){
-      pos2-=1;
-      myservoiki.write(pos2);
-     }
-     curtime=millis();
-   }
-  
+   
+   else
+     finishFlag = 1;
 }
