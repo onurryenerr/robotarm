@@ -37,4 +37,4 @@ function beta=mybeta(x,y,x0,y0,a,b)
     beta=acosd(arguman);
     beta=158-beta;
 end
-
+ 
