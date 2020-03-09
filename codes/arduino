@@ -1,8 +1,8 @@
-
 //hadi bakalim
 #include <Servo.h>
  
 Servo myservo[2];  // create servo object to control a servo
+short int c =  { 0 };    // variable to store the servo position
 short int pos[2] =  { 0 };    // variable to store the servo position
 short int finishFlag[2] = {2,2}; // flag to save last command execution status. 0 - busy, 1 - done, 2 - ready
 int duration[2]; // variable to store delays between position
@@ -10,23 +10,27 @@ long curtime[2]= {0,0}; // variable to store last command execution time
  
 void setup() {
   myservo[0].attach(2);  // attaches the servo on pin 2 to the servo object
-  myservo[1].attach(4);
+  myservo[1].attach(4);   // attaches the servo on pin 4 to the servo object
   
+  //myservo[0].write(pos[0]);
+ // myservo[1].write(pos[1]);
+  pos[0]=135;
   myservo[0].write(pos[0]);
+  pos[1]=68;
   myservo[1].write(pos[1]);
-//  delay(3000);
+  delay(5000);
 //  myservo[0].write(pos1);
-
+  //myservo[1].write(145);
 }
  
  
 void writemotor (short int motor, short int angle) {
   if (finishFlag[motor]==2) {
-    duration[motor]=1000/(angle-pos[motor]);
+    duration[motor]=2000/(angle-pos[motor]);
     finishFlag[motor] = 0;
   }
     
-  if( (finishFlag[motor]==0) && (millis()-curtime[motor]>duration[motor])){
+  if( (finishFlag[motor]==0) && ((millis()-curtime[motor])>duration[motor])){
      if (pos[motor]<angle){
        pos[motor]+=1;
        myservo[motor].write(pos[motor]);
@@ -46,8 +50,8 @@ void writemotor (short int motor, short int angle) {
 
 
 void loop() {
-writemotor(0,100);
-writemotor(1,150);
+writemotor(0,136);
+writemotor(1,69);
 //writemotor(0,positions[j]);
 //writemotor(1,positions[j]);
 //  if (finishFlag[0] && finishFlag[1]) {
