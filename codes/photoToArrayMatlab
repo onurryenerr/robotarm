@@ -1,8 +1,8 @@
-width = 100; % image width  pixel 
-height = 100; % image height pixel
+width = 50; % image width  pixel 
+height = 50; % image height pixel
 
 global tempdata
-tempdata = repmat (cdata, 1);
+tempdata = repmat (cdata, 1); %rename image object to cdata. Should be logical
 tempdata(1,:) = zeros; %clean borders
 tempdata(end,:) = zeros;
 tempdata(:,1) = zeros;
@@ -20,6 +20,8 @@ global tj
 tj = 2;
 global k
 k = 1;
+global found
+found = 0;
 global output %% one dimensional array holding output
 %output = zeros(1,size*size);
 
@@ -72,7 +74,6 @@ for i = 2:(width-1) %ignore borders
            end
            
            if ((di == 1 && dj == 1 ) || (di == 0 && dj == 0))  % up right or newline               
-                            
                order = [8 5 7 3 6 2 4 1];
                orderer (order)
                 
@@ -96,8 +97,10 @@ function order1 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti-1,tj-1) == 1
        recorder(ti-1,tj-1)
+       found = 1;
     end
 end
 
@@ -105,8 +108,10 @@ function order2 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti-1,tj) == 1
        recorder(ti-1,tj)
+       found = 1;
     end
 end 
 
@@ -114,8 +119,10 @@ function order3 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti-1,tj+1) == 1
        recorder(ti-1,tj+1)
+       found = 1;
     end
 end
 
@@ -123,8 +130,10 @@ function order4 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti,tj-1) == 1
        recorder(ti,tj-1)
+       found = 1;
     end
 end
 
@@ -132,8 +141,10 @@ function order5 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti,tj+1) == 1
        recorder(ti,tj+1)
+       found = 1;
     end
 end
 
@@ -141,8 +152,10 @@ function order6 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti+1,tj-1) == 1
        recorder(ti+1,tj-1)
+       found = 1;
     end
 end
 
@@ -150,8 +163,10 @@ function order7 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti+1,tj) == 1
        recorder(ti+1,tj)
+       found = 1;
     end
 end
 
@@ -159,39 +174,36 @@ function order8 ()
     global ti
     global tj
     global tempdata
+    global found
     if tempdata (ti+1,tj+1) == 1
-       recorder(ti+1,tj+1)               
+       recorder(ti+1,tj+1)
+       found = 1;
     end
 end
 
 function orderer (order)
    i=1;
+   found = 0;
    while i<=8
        if order(i) == 1
            order1()
-           i=9; % exit loop
-       elseif order(i) == 2
+         elseif order(i) == 2
            order2()
-           i=9; 
-       elseif order(i) == 3
+         elseif order(i) == 3
            order3()
-           i=9; 
-       elseif order(i) == 4
+         elseif order(i) == 4
            order4()
-           i=9; 
-       elseif order(i) == 5
+         elseif order(i) == 5
            order5()
-           i=9; 
-       elseif order(i) == 6
+         elseif order(i) == 6
            order6()
-           i=9; 
-       elseif order(i) == 7
+         elseif order(i) == 7
            order7()
-           i=9; 
-       elseif order(i) == 8
-           order8()
-           i=9; 
-       i = i+1;
+         elseif order(i) == 8
+           order8()  
+       end
+       if (found == 1)
+           i=9; %exit loop
        end
    end    
 end
