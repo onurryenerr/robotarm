@@ -205,6 +205,8 @@ function orderer (order)
        end
        if (found == 1)
            i=9; %exit loop
+       else
+           i=i+1;
        end
    end    
 end
