@@ -1,1 +1,2 @@
-* Calibrate servos. Check servo.attach min max
+* Calibrate servos. Check servo.attach min max,
+Check if servo library utilize linearization
