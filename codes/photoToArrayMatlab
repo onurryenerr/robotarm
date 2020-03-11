@@ -70,7 +70,7 @@ for i = 2:199 %ignore borders
                orderer (order)       
            end
            
-           if (di == 1 && dj == 1  || (di == 0 && dj == 0))  % up right or newline
+           if ((di == 1 && dj == 1)  || (di == 0 && dj == 0))  % up right or newline
                order = [8 5 7 3 6 2 4 1];
                orderer (order)      
            end
