@@ -2,8 +2,9 @@
 Ve careful about maximum achievable accuracy.
 Depends on pot accuracy.
 
-* Calibrate servos. Check servo.attach min max,
-Check if servo library utilize linearization
+* Calibrate servos. Check voltage dependancy 
+Check servo.attach min max,
+Check if servo library utilize linearization.
 
 *When performing photo to vector, use 250x250 matrix.
 After when performing cartesian to alphabetta,
