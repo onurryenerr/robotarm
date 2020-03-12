@@ -48,3 +48,13 @@ Becasue it can prevent the line to continue.
 (The pixels in neighbors is already counted as visited).
 Explain to Azer. Algorithm optimization depends on inputs.
 If small marked pixels area left, do not draw them
+
+*Make the wooden base a little bigger than a4.
+Consider that, the portrait
+Does not necessarily need to be square.
+With increased resolution, we can savrifice 
+Some angle range, use bigger arms to reach 30x30cm
+Rectangle and use only 20x30cm area of it, or
+Find better (more utilization of angle range)
+arm length ratio for 20x30cm rectangle
+area??
