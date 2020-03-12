@@ -25,3 +25,5 @@ Degree to milliseconds in rapsberry pi
 Requires new transmission protocol
 
 *Consider using ssi or i2c instead of uart
+
+*Think about using micros()
