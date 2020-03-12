@@ -4,3 +4,12 @@ Check if servo library utilize linearization
 *When performing photo to vector, use 250x250 matrix.
 After when performing cartesian to alphabetta,
 Delete consecutive same elements.
+
+*Use for loop and modulo operation for motor speed control.
+Use millis instead of delay. 
+
+*Kalemin icunu indirirken hizini belli bir noktadan sonra azalt.
+Ya da kontrol et.
+
+*Kalemin ucunu kaldirirken kalkarken alfa bettanin
+Hareket edip yazmamasi icin, kalktiktan sonra delay koy
