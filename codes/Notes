@@ -1,6 +1,6 @@
 *Read the datasheet of the servo motor (hs 475 hb).
 Ve careful about maximum achievable accuracy.
-Depends on pot accuracy.
+Depends on pot accuracy. Understand Dead bandwidth
 
 * Calibrate servos. Check voltage dependancy 
 Check servo.attach min max,
