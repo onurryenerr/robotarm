@@ -1,2 +1,6 @@
 * Calibrate servos. Check servo.attach min max,
 Check if servo library utilize linearization
+
+*When performing photo to vector, use 250x250 matrix.
+After when performing cartesian to alphabetta,
+Delete consecutive same elements.
