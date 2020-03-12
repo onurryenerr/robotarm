@@ -15,8 +15,14 @@ Ya da kontrol et.
 Hareket edip yazmamasi icin, kalktiktan sonra delay koy
 
 *Motors precision are increased now. Consider
-Using write.milliseconds instead of delay. Use linearization.
-Use two bytes for each angle. 
+Using write.milliseconds instead of delay. Still
+Use it as dummy delay. Guarantee each iteration
+In the loop is done in a constant time
+
+*Use linearization. Probably map() function.
+Consider the drawbacks.
+
+*Use two bytes for each angle. 
 
 *Consider transforming
 Degree to milliseconds in rapsberry pi
@@ -26,4 +32,5 @@ Requires new transmission protocol
 
 *Consider using ssi or i2c instead of uart
 
-*Think about using micros()
+*Think about using micros(). Read this
+https://forum.arduino.cc/index.php?topic=506192.0
