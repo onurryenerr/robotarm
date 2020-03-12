@@ -1,3 +1,7 @@
+*Read the datasheet of the servo motor (hs 475 hb).
+Ve careful about maximum achievable accuracy.
+Depends on pot accuracy.
+
 * Calibrate servos. Check servo.attach min max,
 Check if servo library utilize linearization
 
