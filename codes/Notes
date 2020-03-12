@@ -46,4 +46,5 @@ Marker area in the code. Mark neighbor pixels as
 Marked_neighbour state. Dont consider neighbours as visited
 Becasue it can prevent the line to continue. 
 (The pixels in neighbors is already counted as visited).
-Explain to Azer. Algorithm optimization depends on inputs
+Explain to Azer. Algorithm optimization depends on inputs.
+If small marked area pixels left, do not draw them
