@@ -62,3 +62,7 @@ area??
 *Realign betta robot so that betta angle can go even
 Higher than 180, because in the other end, there is
 natural stop limitation
+
+*Check servos attached pins timer. Check its collisions
+with micros() and serial communication, if needed
+Use another pin
