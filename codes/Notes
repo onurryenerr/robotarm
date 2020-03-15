@@ -67,3 +67,5 @@ natural stop limitation
 *Check servos attached pins timer. Check its collisions
 with micros() and serial communication, if needed
 Use another pin
+
+*Increase serial buffer size. Be careful about its effect to RAM
