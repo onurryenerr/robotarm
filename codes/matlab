@@ -35,6 +35,6 @@ function beta=mybeta(x,y,x0,y0,a,b)
     c=((x-x0).^2 +(y-y0).^2).^0.5;
     arguman=(-(c.^2)+(a.^2)+(b.^2))/(2.*a.*b);
     beta=acosd(arguman);
-    beta=158-beta;
+    beta=185-beta;
 end
  
