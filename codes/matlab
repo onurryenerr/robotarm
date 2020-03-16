@@ -5,7 +5,7 @@ b=125; %enter the length of the arm b in mm.
 minAngle = 20 ; %enter minimum angle in degrees between a and b
 acc = 0.5; %define angle accuracy.
 
-ratioAngle = 45; 
+ratioAngle = 43; 
 %angle between x axis and the line connecting origin 
 % and alpha motor position x0,y0
 %change this value to change origin
@@ -20,7 +20,6 @@ paperY = floor(y0 - heightLoss)-1;  %height of the sketching area
 % use photo with this resolution values
 photoX = paperX*pixelDensity  %enter width of the photo in pixel count
 photoY = paperY*pixelDensity  %enter height of the photo in pixel count
-
 
 paper=[photoX,photoY,2];
 for x=1:photoX
