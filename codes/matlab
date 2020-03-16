@@ -1,24 +1,35 @@
-clear all
-paper=[120,114,2];
+pixelDensity = 4; %linear density. number of pixels in a mm length.
+% run the script ones, to get photoX and photoY values. (photo resolution)
+a=122; %enter the length of the arm a in mm. same with arm b
+b=a;
+minAngle = 20 ; %enter minimum angle in degrees between a and b
+acc = 0.5; %define angle accuracy.
 
-x0=116;
-y0=207;
-a=123;
-b=150;
 
-    
-   
+x0=(a+b)/sqrt(2); 
+y0=x0;
+paperX = floor(x0)-1; %width of the sketching area
+paperY = floor(y0 - 2*a*sind(minAngle/2))-1; %length of the sketching area
 
-for x=1:120
-    for y=1:114
-        paper(x,y,1)=myalfa(x,y,x0,y0,a,b);
-        
-        paper(x,y,2)=mybeta(x,y,x0,y0,a,b);
-        
+%photo and paper aspect ratio should be same
+% use photo with this resolution values
+photoX = paperX*pixelDensity  %enter width of the photo in pixel count
+photoY = paperY*pixelDensity  %enter length of the photo in pixel count
+
+
+paper=[photoX,photoY,2];
+for x=1:photoX
+    for y=1:photoY
+        paper(x,y,1)=myalfa(x/pixelDensity,y/pixelDensity,x0,y0,a,b);        
+        paper(x,y,2)=mybeta(x/pixelDensity,y/pixelDensity,x0,y0,a,b);        
     end
 end
 
-paper=round(paper);
+paper = round(paper/acc)*acc; %round to accuracy degrees (0.5)
+%paper=round(paper);
+dlmwrite('paper.csv',paper) % output transformation matrix, 
+%the most inner loop is 'y', middle loop is 'angle-alpha or betta',
+%the outmost loop is 'x'.
  
 function alfa=myalfa(x,y,x0,y0,a,b)
     c=((x-x0).^2 +(y-y0).^2).^0.5;
@@ -37,4 +48,3 @@ function beta=mybeta(x,y,x0,y0,a,b)
     beta=acosd(arguman);
     beta=185-beta;
 end
- 
