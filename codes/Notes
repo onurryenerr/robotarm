@@ -69,3 +69,6 @@ with micros() and serial communication, if needed
 Use another pin
 
 *Increase serial buffer size. Be careful about its effect to RAM
+
+*Solve Noir camera purpleness. Read this link
+https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=245994
