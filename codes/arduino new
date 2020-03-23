@@ -86,7 +86,7 @@ void loop() {
 //writemotor(0,136);
 //writemotor(1,69);
 
-    if(positions[j][0]> 250) {
+    while(positions[j][0]>250) {
       if(positions[j][0]==251){               //lift code is 251, alpha and beta should be 251 
         liftPen();
         j++;
@@ -100,6 +100,7 @@ void loop() {
         while(1){};
       }
     }
+    
 writemotor(0,positions[j][0]);
 writemotor(1,positions[j][1]);
 
