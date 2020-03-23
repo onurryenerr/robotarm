@@ -1,5 +1,5 @@
-width = 50; % image width  pixel 
-height = 50; % image height pixel
+width = 716; % image width  pixel 
+height = 496; % image height pixel
 
 global tempdata
 tempdata = repmat (cdata, 1); %rename image object to cdata. Should be logical
@@ -25,17 +25,29 @@ found = 0;
 global output %% one dimensional array holding output
 %output = zeros(1,size*size);
 
+output(k) = 2510; %lift the pen code
+k=k+1;
+output(k) = 2510;
+k=k+1;
 for i = 2:(width-1) %ignore borders
     for j = 2:(height-1)
         if tempdata (i,j) == 1 % beginning of the line
-           output (k) = i;
+           
+           output (k) = i; %go to first point
            k=k+1;
            output (k) = j;
            k=k+1;
+           
+           output (k) = 2520; %after going to first point, lower pen
+           k=k+1;
+           output (k) = 2520;
+           k=k+1;
+           
            tempdata (i,j) = 0;
            ti=i;
            tj=j;
-           fullCheckFlag = 1;                     
+           fullCheckFlag = 1; 
+           
            while (fullCheckFlag<2)
            
            if ((di == -1 && dj == -1))
@@ -79,19 +91,22 @@ for i = 2:(width-1) %ignore borders
                 
            end
                
+           fullCheckFlag = fullCheckFlag + 1;
+           
            if fullCheckFlag == 2  %no neighbour point is found, end of line
                di = 0; 
                dj = 0;
-               
-           else
-               fullCheckFlag = fullCheckFlag + 1; 
-               
+               output(k)=2510; %lift pen
+               k=k+1;
+               output(k)=2510;
+               k=k+1;         
            end
            
            end           
         end
     end
 end
+dlmwrite('fotoxy.csv',output) % output transformation matrix, 
 
 function order1 ()
     global ti
