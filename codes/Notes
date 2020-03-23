@@ -1,6 +1,3 @@
-*Read the datasheet of the servo motor (hs 475 hb).
-Ve careful about maximum achievable accuracy.
-Depends on pot accuracy. Understand Dead bandwidth
 
 * Calibrate servos. Check voltage dependancy 
 Check servo.attach min max,
@@ -15,9 +12,6 @@ Use millis instead of delay.
 
 *Kalemin icunu indirirken hizini belli bir noktadan sonra azalt.
 Ya da kontrol et.
-
-*Kalemin ucunu kaldirirken kalkarken alfa bettanin
-Hareket edip yazmamasi icin, kalktiktan sonra delay koy
 
 *Motors precision are increased now. Consider
 Using write.milliseconds instead of delay. Still
@@ -37,14 +31,11 @@ Requires new transmission protocol
 
 *Consider using ssi or i2c instead of uart
 
-*Think about using micros(). Read this
-https://forum.arduino.cc/index.php?topic=506192.0
-
 *For photo to vector algorithm, mind double lines.
 In some cases single points could be left. Think about
 Marker area in the code. Mark neighbor pixels as
 Marked_neighbour state. Dont consider neighbours as visited
-Becasue it can prevent the line to continue. 
+Because it can prevent the line to continue. 
 (The pixels in neighbors is already counted as visited).
 Explain to Azer. Algorithm optimization depends on inputs.
 If small marked pixels area left, do not draw them.
@@ -72,3 +63,6 @@ Use another pin
 
 *Solve Noir camera purpleness. Read this link
 https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=245994
+
+*When increasing j (j++) be careful that we can be in the
+end of the array.
