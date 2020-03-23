@@ -43,7 +43,7 @@ void writemotor (short int motor, short int angle) {
       
   }
   
-  if( (finishFlag[motor]==0){
+  if (finishFlag[motor]==0){
       
       if (micros() < curtime[motor])                              //  prevent micros overflow
         curtime[motor] = 4294967295 - curtime[motor];
@@ -85,31 +85,20 @@ void loop() {
 //writemotor(0,136);
 //writemotor(1,69);
 
-
-if(positions[j][0] > 250) {
-
-   switch (positions[j][0])
-  ​{
-    case 251:
-      liftPen();                     // lift the pen
-      j++;
-      break;
-
-    case 252:
-      lowerPen();                      // lower the pen
-      j++;
-      break;
-
-    case 253:
-      liftPen();
-      while(1){};
-      break;
-    
-  }
-}
-
-
-
+    if(positions[j][0]> 250) {
+      if(positions[j][0]==251){
+        liftPen();
+        j++;
+      }
+      else if(positions[j][0]==252){
+        lowerPen();
+        j++;
+      }
+      else if(positions[j][0]==253){
+        liftPen();
+        while(1){};
+      }
+    }
 writemotor(0,positions[j][0]);
 writemotor(1,positions[j][1]);
 
