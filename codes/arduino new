@@ -73,12 +73,12 @@ void writemotor (short int motor, short int angle) {
 }
 
 void liftPen() {                //lifting the pen with 3rd motor
-   myservo[2].write(150);
+   myservo[2].write(89);
    delay(100);
 }
 
 void lowerPen() {               //lowering the pen with 3rd motor
-   myservo[2].write(0);
+   myservo[2].write(14);
    delay(100);
 }
 
