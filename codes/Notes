@@ -66,3 +66,6 @@ https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=245994
 
 *When increasing j (j++) be careful that we can be in the
 end of the array.
+
+*Rapsberry camera setup. Read details
+https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
