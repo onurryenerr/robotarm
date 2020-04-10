@@ -1,0 +1,75 @@
+pixelDensity = 3; %linear density. number of pixels in a mm length.
+% run the script ones, to get photoX and photoY values. (photo resolution)
+a=122; %enter the length of the arm a in mm.
+b=119; %enter the length of the arm b in mm.
+minAngle = 20 ; %enter minimum angle in degrees between a and b
+acc = 1; %define angle accuracy.
+
+ratioAngle = 43; 
+%angle between x axis and the line connecting origin 
+% and alpha motor position x0,y0
+%change this value to change origin
+x0=(a+b)*cosd(ratioAngle);
+y0=(a+b)*sind(ratioAngle);
+
+paperX = floor(x0)-1; %width of the sketching area
+heightLoss=(a.^2 +b.^2-2.*a.*b*cosd(minAngle)).^0.5
+paperY = floor(y0 - heightLoss)-1;  %height of the sketching area
+
+%photo and paper aspect ratio should be same
+% use photo with this resolution values
+photoX = paperX*pixelDensity  %enter width of the photo in pixel count
+photoY = paperY*pixelDensity  %enter height of the photo in pixel count
+
+paper=[photoX,photoY,2];
+for x=1:photoX
+    for y=1:photoY
+        paper(x,y,1)=myalfa(x/pixelDensity,y/pixelDensity,x0,y0,a,b);        
+        paper(x,y,2)=mybeta(x/pixelDensity,y/pixelDensity,x0,y0,a,b);        
+    end
+end
+
+paper = round(paper/acc)*acc; %round to accuracy degrees (0.5)
+%paper=round(paper);
+dlmwrite('paper.csv',paper) % output transformation matrix, 
+%the most inner loop is 'y', middle loop is 'angle-alpha or betta',
+%the outmost loop is 'x'.
+
+
+% 
+% vector=[180,2];
+% transformvec=[340,2];
+% for i=1:340
+%     transformvec(i,1)=paper(vector(i,1),vector(i,2),1);
+%     transformvec(i,2)=paper(vector(i,1),vector(i,2),2);
+% end
+% dlmwrite('transformvec.txt',transformvec)
+
+
+
+
+
+
+ 
+function alfa=myalfa(x,y,x0,y0,a,b)
+    c=((x-x0).^2 +(y-y0).^2).^0.5;
+    
+    gamma=atand((x-x0)/(y-y0));
+    
+    teta=acosd((-(b.^2)+a.^2+c.^2)/(2*a*c));
+    
+    alfa=180+gamma-teta;
+    if (alfa<96)
+        msg = ['ERROR. alpha angle cannot move less than '...
+        '96 deg due to Physical restriction, decrease b'];
+        error(msg);
+    end    
+    alfa=270-alfa;
+end
+  
+function beta=mybeta(x,y,x0,y0,a,b)
+    c=((x-x0).^2 +(y-y0).^2).^0.5;
+    arguman=(-(c.^2)+(a.^2)+(b.^2))/(2.*a.*b);
+    beta=acosd(arguman);
+    beta=185-beta;
+end
