@@ -1,6 +1,7 @@
-clear all;
+clearvars -except cdata
 positions = readmatrix('fotoxy.csv');
 trMatrix = readmatrix('paper.csv');
+offset = cast((size(trMatrix,2)/2), 'uint16');
 
 i=1;
 j=1;
@@ -15,12 +16,14 @@ while (positions(j) ~= 2530)
     j=j+1;
     
     else
-    output (i) = 604+((2350-604)/180)*trMatrix(positions(j),positions(j+1));
+    output (i) = 604+((2350-604)/180)*trMatrix(positions(j),positions(j+1)); %alpha calibration
     i=i+1;
-    output (i) = 604+((2350-604)/180)*trMatrix(positions(j),484+positions(j+1));
+    output (i) = 604+((2350-604)/180)*trMatrix(positions(j),offset+positions(j+1)); %betta calibration
     i=i+1;  
     j=j+2;
     end
+    
+    output = round (output);
     
     if (i>5 && (output(i-1)==output(i-3)) && (output(i-2)==output(i-4)) )
         i=i-2; %% eliminate repetitive points
@@ -35,8 +38,6 @@ while (positions(j) ~= 2530)
     end
     
 end
-
-output = round (output);
 
 output (i) = 253; %end of file
 i=i+1;

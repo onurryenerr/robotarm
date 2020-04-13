@@ -1,5 +1,6 @@
-nextPoint = zeros (1,2);
-nextPoint (1,1) = 5;
-if ( nextPoint(1,1) || nextPoint(1,2))
-    10
-end
+matrix = [1,1,1;1,0,1;1,0,1;1,1,1];
+length(matrix(:,1))
+outputImage = ones(3,3)
+matrix = ones() - matrix;
+imshow(matrix)
+

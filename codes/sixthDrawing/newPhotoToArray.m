@@ -1,16 +1,21 @@
+clearvars -except cdata
 % width = 700; % image width  pixel 
 % height = 484; % image height pixel
-width = 700; % image width  pixel 
-height = 484; % image height pixel
+width = 1050; % image width  pixel 
+height = 726; % image height pixel
 
-minLineLen = 2; % min length of line to record
-minLineWidth = 3; %min width of thickest part of the of line
+minLineLen = 20; % min length of line to record
+minLineWidth = 10; %min width of thickest part of the of line
 
 global penTip
-penTip = 1;
+penTip = 3;
+
+%minLineLen = minLineLen/(2*penTip+1) %relation between minLineLen and
+%penTip
 penTipDouble = 2*penTip+1;
 global image
 image = transpose (cdata);
+image = flip (image,1);
 %image = repmat (cdata, 1); %rename image object to cdata. Should be logical
 image(1:penTipDouble+1,:) = zeros; %clean borders
 image((end-(penTipDouble)):end,:) = zeros;
@@ -31,12 +36,11 @@ k=k+1;
 output(k) = 2510;
 k=k+1;
 
-for i = (penTip+1):(width-penTip) %ignore borders, traverse
-    for j = (penTip+1):(height-penTip)
+for i = (penTipDouble+1):(width-penTipDouble) %ignore borders, traverse
+    for j = (penTipDouble+1):(height-penTipDouble)
       % if image (blackCounter(i,j) == penTip^2) % beginning of the line
       %  if blackCounter(i,j) >= ((penTip+2)^2)/2 % beginning of the line
       if blackCounter(i,j) >= minLineWidth % beginning of the line
-           
 %            visitedMarker(i,j); % mark all points as visited
 %            neighbours = neighboursFinder(i,j); %get all neighbours coordinates in 8x2 matrix
 %            nextPoint = biggestNeighbourFinder (neighbours);
@@ -79,6 +83,30 @@ k=k+1;
 output(k)=2530;
 
 dlmwrite('fotoxy.csv',output) % output transformation matrix, 
+%display result
+numOfLines = 0;
+outputImage = ones(width,height);
+for coun = 1:2:(length(output))
+    if output(coun)<2510
+        outputImage(output(coun) , output(coun+1)) = 0;
+    end
+    if output(coun)==2510
+        numOfLines = numOfLines + 1;
+    end
+    if output(coun)==2530
+        break
+    end
+end
+%outputImage=flip(outputImage,1);
+%outputImage=flip(outputImage,2);
+%Display parameters;
+penTip
+minLineLen
+minLineWidth
+
+%Display output
+imshow(outputImage)
+numOfLines
 
 function numBlack = blackCounter (x,y)
 global penTip

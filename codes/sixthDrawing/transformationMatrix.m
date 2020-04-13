@@ -1,9 +1,9 @@
-pixelDensity = 4; %linear density. number of pixels in a mm length.
+pixelDensity = 6; %linear density. number of pixels in a mm length.
 % run the script ones, to get photoX and photoY values. (photo resolution)
-a=122; %enter the length of the arm a in mm.
-b=119; %enter the length of the arm b in mm.
+a=120; %enter the length of the arm a in mm.
+b=122; %enter the length of the arm b in mm.
 minAngle = 20 ; %enter minimum angle in degrees between a and b
-acc = 0.5; %define angle accuracy.
+acc = 0.25; %define angle accuracy.
 
 ratioAngle = 43; 
 %angle between x axis and the line connecting origin 

@@ -1,5 +1,5 @@
 import serial, time, csv
-with open('onurNew.csv', 'r') as file:
+with open('AnarMinLine.csv', 'r') as file:
     reader = csv.reader(file)
     for row in reader:
         print(row[0])
