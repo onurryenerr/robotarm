@@ -3,7 +3,7 @@
 
 //byte counter = 0;
 short int led = 0;
-short int velocityCoeff=2; // Enter speed between 1 (fastest)-10(slowest) 
+short int velocityCoeff=3; // Enter speed between 1 (fastest)-10(slowest) 
 Servo myservo[3];  // create servo object to control a servo
 short int pos[2] =  { 0 };    // variable to store the servo position
 short int finishFlag[2] =  {2,2}; // flag to save last command execution status. 0 - busy, 1 - done, 2 - ready
@@ -49,7 +49,7 @@ void setup() {
 void writemotor (short int motor, short int angle) {
   if (finishFlag[motor]==2) {
     
-    if (abs(angle - pos[motor])>3) {   
+    if (abs(angle - pos[motor])>=2) {   
   //    duration[motor]=velocityCoeff*max(abs(pos[0]-positions[j][0]),abs(pos[1]-positions[j][1]))/abs(angle-pos[motor]);
         duration[motor]=velocityCoeff;
        
@@ -70,8 +70,8 @@ void writemotor (short int motor, short int angle) {
     
   if( (finishFlag[motor]==0) && ((millis()-curtime[motor])>duration[motor])){
      
-     if (angle-pos[motor]>3){
-       pos[motor]+=5;
+     if (angle-pos[motor]>=2){
+       pos[motor]+=2;
        
        myservo[motor].write(pos[motor]);
  //      Serial.println (angle);
@@ -79,8 +79,8 @@ void writemotor (short int motor, short int angle) {
        curtime[motor]=millis();
      }
     
-     else if (angle-pos[motor]<-3){      
-       pos[motor]-=5;
+     else if (angle-pos[motor]<=-2){      
+       pos[motor]-=2;
        myservo[motor].write(pos[motor]);
  //      Serial.println (angle);
  //      Serial.println (pos[motor]);    
