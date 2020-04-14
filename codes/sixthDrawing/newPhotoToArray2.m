@@ -189,6 +189,7 @@ nextPoint = zeros (1,2);
             nextPoint = neighbours(i,:); %return biggest neighbour coordinate
         end
     end
+    %nextPoint = cenOfMass (nextPoint); %beware 0,0 condition
 end
 
 
