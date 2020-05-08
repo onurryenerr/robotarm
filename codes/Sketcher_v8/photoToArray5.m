@@ -8,16 +8,15 @@ height = 720; % image height pixel
 global minLineLen
 global minBlackToBegin
 global minBlackToCont
-global connectionSize
 global penTip
 
 %% FINE TUNING PARAMETERS
-minLineLen = 15; % min length of line to record
+minLineLen = 20; % min length of line to record
 minBlackToBegin = 7; %min # of blacks to begin line
 minBlackToCont = 1; %min # of blacks to continue line
 penTip = 1; %%defines sliding window's size. peTip=1 corresponds to
 %3x3 sliding windows, penTip = 2=>5x5, 3=>7x7 and so on.
-maxConnectionRange = 12; %number of pixels between line ends to connect them
+maxConnectionRange = 10; %number of pixels between line ends to connect them
 %% END OF FINE TUNING PARAMETERS
 
 global windowSideSize
@@ -107,15 +106,24 @@ for i=1:size(lines,1) %%current line to find close lines in the end
     x0 = lines{i}(end,1); %get end coordinates
     y0 = lines{i}(end,2);
         for k = i+1:size(lines,1)  %search all other available lines ends and beginnings
+            distMin = 2147483647; %INT_MAX
             if linesWaiting (k) == 1
                 if (abs(lines{k}(1,1)-x0)<=maxConnectionRange) && (abs(lines{k}(1,2)-y0)<=maxConnectionRange)
-                    flipFlag = 0; % no need to flip
-                    foundFlag = 1;
-                    break
+                    dist = distCalc (lines{k}(1,1),x0,lines{k}(1,2),y0);
+                    if dist<distMin
+                        distMin = dist;
+                        distMinNum = k;
+                        flipFlag = 0; % no need to flip
+                        foundFlag = 1;
+                    end                    
                 elseif (abs(lines{k}(end,1)-x0)<=maxConnectionRange) && (abs(lines{k}(end,2)-y0)<=maxConnectionRange)
-                    flipFlag = 1; % no need to flip
-                    foundFlag = 1;
-                    break
+                    dist = distCalc (lines{k}(end,1),x0,lines{k}(end,2),y0);
+                    if dist<distMin
+                        distMin = dist;
+                        distMinNum = k;
+                        flipFlag = 1; %  flip
+                        foundFlag = 1;
+                    end
                 end
             end
         end
@@ -123,16 +131,15 @@ for i=1:size(lines,1) %%current line to find close lines in the end
     linesConnected(i-numOfReductions, :, :) = {lines{i}}; %no line found to add to the end of current line
     else
         if flipFlag == 1
-            lines{k} = flip(lines{k});
+            lines{distMinNum} = flip(lines{distMinNum});
         end
-        linesConnected(i-numOfReductions, :, :) = {[lines{i};lines{k}]};
-        linesWaiting(k) = 0;
+        linesConnected(i-numOfReductions, :, :) = {[lines{i};lines{distMinNum}]};
+        linesWaiting(distMinNum) = 0;
     end
 end
 lines = linesConnected (:);
 end
-
-%%repeat line connector until no line concetenation occur
+%repeat line connector until no line concetenation occur
 
 %%%%%%%%%%%%%%  END OF LINE CONNECTOR  %%%%%%%%%%%%%%%%%%%%%%%
 
@@ -149,7 +156,7 @@ currentLineNumber = 1; %start with the first line. find closest line ...
         end
         lineRecorder (linesConnected{currentLineNumber}) %record current line
         linesWaiting(currentLineNumber) = 0; %delete the line from waiting list
-        distMin = 2*(width+height);
+        distMin = 2147483647; %INT_MAX
         nextLineNumber = 0;
         for j=2:redNumOfLines
             if linesWaiting(j) == 1 %if line is not drawn yet
@@ -321,7 +328,7 @@ line = double.empty(0,2);
 end
 
 function dist = distCalc (x1,y1,x2,y2)
-    dist = sqrt((x1-x2).^2+(y1-y2).^2);
+    dist = (x1-x2).^2+(y1-y2).^2;
 end
 
 function lineRecorder (line)
