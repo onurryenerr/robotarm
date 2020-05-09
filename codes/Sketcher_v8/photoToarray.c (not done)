@@ -1,0 +1,434 @@
+//
+//  main.c
+//  photoToArray
+//
+
+
+// index variable is now indexx
+
+
+
+
+#include <stdio.h>
+
+//clearvars -except cdata
+
+const short int width = 1050; // image width  pixel
+const short int height = 720; // image height pixel
+
+// FINE TUNING PARAMETERS
+
+const short int minLineLen= 20; // min length of line to record
+const short int minBlackToBegin= 7; //min # of blacks to begin line
+const short int minBlackToCont = 1; //min # of blacks to continue line
+const short int penTip = 1;   //defines sliding window's size. peTip=1 corresponds to
+                        //3x3 sliding windows, penTip = 2=>5x5, 3=>7x7 and so on.
+short int maxConnectionRange = 10; //number of pixels between line ends to connect them
+
+
+//END OF FINE TUNING PARAMETERS
+
+const short int windowSideSize = (penTip*2)+1;
+
+short int numOfNeighbours=8*windowSideSize;
+
+const short int xMin= 3*penTip+2;
+const short int xMax= width-(3*penTip+1);
+const short int yMin= 3*penTip+2;
+const short int yMax = height-(3*penTip+1);
+
+//global image
+//image = transpose (cdata);
+//image = flip (image,1);
+
+//%%%%%%%%%%%%ADDITIONAL ADDINGS%%%%%%%%%%%%%%%%
+
+
+
+int image[100][100];   /// Can be erased after transpose (cdata)
+
+
+
+
+
+//%%%%%%%%%%%% END OF ADDITIONAL ADDINGS%%%%%%%%%%%%%%%%
+
+
+int indexx=0;
+
+int output[]; // one dimensional array holding output
+int lines[];// cell array variable to store lines.
+int numLines = 0; //number of lines
+int line[];  //inside lineFinder
+int linesConnected[]; //inside lineConnector
+
+
+
+int blackCounter ();
+void visitedMarker ();
+void unvisitedMarker ();
+int *neighboursFinder ();
+int *biggestNeighbourFinder ();
+void recoverLine ();
+int lineExtractor ();
+int distCalc ();
+void *lineRecorder ();
+void FlipColumn();
+void VFlipArray();
+
+
+int main() {
+    
+    output[indexx] = 2510; //lift the pen code
+    indexx=indexx+1;
+    output[1] = 2510;
+    indexx=indexx+1;
+    
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%  LINE FINDER  %%%%%%%%%%%%%%%%%%%%
+   
+    for (int i = xMin;i<=xMax;){ //ignore borders, traverse
+        for (int j = yMin;j<=yMax;){
+
+            if (blackCounter(i,j) >= minBlackToBegin){//% beginning of the line
+                visitedMarker(i,j);  //%dont let extracting line towards current point
+                int *neighbours= neighboursFinder(i,j); //%get all neighbours coordinates in 8x2 matrix
+                int *nextPoint = biggestNeighbourFinder (neighbours); //%find biggest neighbour to the current point
+                int *line1 = lineExtractor (nextPoint[0],nextPoint[1]); //extract line starting from biggest neighbor
+                int *nextPoint1 = biggestNeighbourFinder (neighbours); //find another neighbour to the current point
+                int *line2 = lineExtractor (nextPoint[0],nextPoint[1]);
+              
+                int rowLine1 = sizeof(line1) / sizeof(line1[0]); // in order to make flip ,first find row number
+                FlipColumn(line1,2,rowLine1);
+                VFlipArray(line1,2,rowLine1);
+                int line = [line1; [i j]; line2]; //???????? find how to convert it to c
+            }
+                //  %flip elements in each column add current point and line2
+            
+            int rowLine = sizeof(*line) / sizeof(line[0]);
+            if (rowLine>=minLineLen){
+                numLines = numLines + 1;
+                lines(numLines, :, :) = {line};     ////????????* find how to convert it to c
+            }
+            else;{
+                recoverLine (line);
+                j=j+windowSideSize;
+            }
+        }
+        i=i+windowSideSize;
+    }
+
+//%%%%%%%%%%%%%%  END OF LINE FINDER  %%%%%%%%%%%%%%%%%
+
+//%%%%%%%%%%%%%%  LINE CONNECTOR  %%%%%%%%%%%%%%%%%
+
+    int numOfReductions = 1;
+    while (numOfReductions > 0){
+   //     linesConnected[]; //cell array to hold lines after connection.
+    numOfReductions = 0;
+    int flipFlag = 0;
+    int linesWaiting[numLines];
+    for (int i = 0; i < numLines; i++) // having all the items in the array as 1
+    {
+        linesWaiting[i]= 1;
+    }
+    int rowLine = sizeof(*line) / sizeof(line[0]);
+    for (int i=0;i<rowLine;i++){    // %%current line to find close lines in the end
+        if (linesWaiting[i] == 0){     //if the line is added dont proceed it anymore
+            numOfReductions = numOfReductions + 1;
+            continue;
+        }
+        linesWaiting[i] = 0; //delete the line from waiting list
+        int foundFlag = 0; //no lines found to be connected yet
+        int rowLines = sizeof(*lines) / sizeof(lines[0]);
+        int x0 = lines[0][rowLines]; //get end coordinates   //////////////////????????????
+        int y0 = lines[1][rowLines];
+        for (int k = i+1;k<rowLines;k++){ // search all other available lines ends and beginnings
+            long distMin = 2147483647; //INT_MAX
+            if (linesWaiting [k] == 1){
+                if ((abs(lines[k](1,1)-x0)<=maxConnectionRange) && (abs(lines{k}(1,2)-y0)<=maxConnectionRange)){
+                    int dist = distCalc (lines{k}(1,1),x0,lines{k}(1,2),y0);
+                    if (dist<distMin){
+                        distMin = dist;
+                        int distMinNum = k;
+                        flipFlag = 0; // no need to flip
+                        foundFlag = 1;
+                    }
+                    else if ((abs(lines{k}(end,1)-x0)<=maxConnectionRange) && (abs(lines{k}(end,2)-y0)<=maxConnectionRange)){
+                        dist = distCalc (lines{k}(end,1),x0,lines{k}(end,2),y0);
+                        if (dist<distMin){
+                            distMin = dist;
+                            distMinNum = k;
+                            flipFlag = 1; %  flip
+                            foundFlag = 1;
+                        }
+                    }
+                }
+            }
+        }
+        if (foundFlag == 0){
+            linesConnected(i-numOfReductions, :, :) = {lines{i}}; //no line found to add to the end of current line
+        }
+        else;{
+            if (flipFlag == 1){
+                lines{distMinNum} = flip(lines{distMinNum});
+            }
+            linesConnected(i-numOfReductions, :, :) = {[lines{i};lines{distMinNum}]};
+            linesWaiting(distMinNum) = 0;
+        }
+    }
+    lines = linesConnected (:);
+    //%repeat line connector until no line concetenation occur
+    }
+//%%%%%%%%%%%%%%  END OF LINE CONNECTOR  %%%%%%%%%%%%%%%%%%%%%%%
+
+
+//%%%%%%%%%%%%%%  LINE ORDERER AND RECORDER  %%%%%%%%%%%%%%%%%%%%%%%
+
+    int redNumOfLines = sizeof(*lines) / sizeof(lines[0]);
+    int linesWaiting[redNumOfLines];
+        for (int i = 0; i < redNumOfLines; i++) // having all the items in the array as 1
+        {
+            linesWaiting[i]= 1;
+        }
+       int currentLineNumber = 1; //start with the first line. find closest line ...
+    //line beginning or line end to the end of current line
+    while (currentLineNumber!=0){
+        if (flipFlag == 1) {    //% flip the line if needed
+            linesConnected{currentLineNumber} = flip(linesConnected{currentLineNumber});
+        }
+        lineRecorder (linesConnected{currentLineNumber}) //record current line
+        linesWaiting(currentLineNumber) = 0; //delete the line from waiting list
+        distMin = 2147483647; //INT_MAX
+        nextLineNumber = 0;
+        for (j=1;j<redNumOfLines;j++){
+            if (linesWaiting[j] == 1){    //if line is not drawn yet
+                //calc. distance between end of current line and beginning of next line
+                dist = distCalc (linesConnected{currentLineNumber}(end,1), linesConnected{currentLineNumber}(end,2), ...
+                linesConnected{j}(1,1), linesConnected{j}(1,2));
+                if (dist<distMin){
+                    distMin = dist;
+                    nextLineNumber = j;
+                    flipFlag = 0; //found point is beginning of line. no need to flip
+                }
+
+                dist = distCalc (linesConnected{currentLineNumber}(end,1), linesConnected{currentLineNumber}(end,2), ...
+                linesConnected{j}(end,1), linesConnected{j}(end,2));
+                if (dist<distMin){
+                    distMin = dist;
+                    nextLineNumber = j;
+                    flipFlag = 1; //found point is the end of line. need to flip
+                }
+            }
+        }
+            currentLineNumber = nextLineNumber;
+    }
+
+//%%%%%%%%%%%%%% END OF LINE ORDERER AND RECORDER %%%%%%%%%%%%%%%%%%%%%%%
+
+output(index)=2530; //end of the file
+index=index+1;
+output(index)=2530;
+
+dlmwrite('fotoxy.csv',output) % output transformation matrix,
+%display result
+numOfLines = 0;
+outputImage = ones(width,height);
+for coun = 1:2:(length(output))
+if output(coun)<2510
+outputImage(output(coun) , output(coun+1)) = 0;
+end
+if output(coun)==2510
+numOfLines = numOfLines + 1;
+end
+if output(coun)==2530
+break
+end
+end
+//%outputImage=flip(outputImage,1);
+//%outputImage=flip(outputImage,2);
+//%Display parameters;
+penTip
+minLineLen
+minBlackToBegin
+minBlackToCont
+
+//%Display output
+imshow(outputImage)
+numLines
+redNumOfLines
+    
+    
+}  // end of main func
+
+int blackCounter (x,y){
+
+    int numBlack = 0;
+    for (int i=-penTip;i<=penTip;i++){
+        for (int j=-penTip;j<=penTip;j++){
+            if (image[x+i-1][y+j-1] == 1){
+                numBlack = numBlack + 1;
+            }
+        }
+    }
+    return numBlack;
+}
+
+void visitedMarker (x,y){
+
+    for (int i=-penTip;i<=penTip;i++){
+        for (int j=-penTip;j<=penTip;j++){
+            image[x+i-1][y+j-1] = 0;
+        
+        }
+    }
+
+}
+
+
+void unvisitedMarker (x,y){
+
+    for (int i=-penTip;i<=penTip;i++){
+        for (int j=-penTip;j<=penTip;j++){
+            image[x+i-1][y+j-1] = 1;
+            
+        }
+    }
+    
+}
+
+int *neighboursFinder (x,y){
+
+    int neighbours[numOfNeighbours][2] ;   /////???????????????????
+    for (int i = 0; i < numOfNeighbours; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            neighbours[i][j] = 0;
+            
+        }
+      
+    }
+    indexx = 0;
+    for (int i=-windowSideSize;i<=windowSideSize;i++){
+        for (int j=-windowSideSize;j<=windowSideSize;j++){
+            if (i>-windowSideSize && i<windowSideSize && j>-windowSideSize && j<windowSideSize){//ignoreinterlacing windows with current window%ignoreinterlacing windows with current window
+                continue;
+            }
+            neighbours[indexx][0] = x+i;
+            neighbours[indexx][1] = y+j;
+            indexx = indexx+1;
+        }
+    }
+
+return neighbours;
+}
+
+int *biggestNeighbourFinder (int neighbours[numOfNeighbours][2] ){
+
+    int maxNumBlack = minBlackToCont;
+    int nextPoint[1][2];
+    
+    for (int i = 0; i < 1; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            nextPoint[i][j] = 0;
+            
+        }
+        
+    }
+ 
+    
+    
+    for (int i=0;i<=numOfNeighbours;i++){
+        if (neighbours [i][0]<xMin || neighbours[i][0]>xMax || neighbours[i][1]<yMin || neighbours[i][1]>yMax){
+            continue;
+            }
+        if (blackCounter(neighbours [i][0], neighbours[i][1]) > maxNumBlack){
+            maxNumBlack = blackCounter(neighbours [i][0], neighbours [i][1]);
+            nextPoint[0][0] = neighbours[i][0]; //%return biggest neighbour coordinate
+            nextPoint[0][1] = neighbours[i][1];
+        }
+    }
+
+return nextPoint;
+}
+
+
+
+
+void recoverLine (int line[][500]){
+    int row = sizeof(line) / sizeof(line[0]);
+    for (int i=0;i>=row;i++){
+        unvisitedMarker(line[i][0],line[i][1]); //%recover line
+    }
+}
+
+int lineExtractor (x,y){
+    double line[][2];
+    while (x || y){ //%continue until line breaks
+        //if nextPoint coordinate is 0,0, it means no neighbour found
+        //update current coordinate
+        line = [line; [x y]]; //%add current point to the line
+        visitedMarker(x,y); //mark all points as visited
+        int *neighbours = neighboursFinder(x,y); //get all neighbours coordinates in 8x2 matrix
+        int *nextPoint = biggestNeighbourFinder (neighbours);
+        x=nextPoint[0];
+        y=nextPoint[1];
+    }
+    return line;
+}
+
+
+int distCalc (x1,y1,x2,y2){
+    int dist = (x1-x2)^2+(y1-y2)^2;
+    return dist;
+}
+
+
+void *lineRecorder (int line[][500]){
+
+    output [indexx] = line[0][0]; //%go to first point
+
+    indexx=indexx+1;
+    output [indexx] = line[1][1];
+    indexx=indexx+1;
+
+    output [indexx] = 2520; //%after going to first point, lower pen
+    indexx=indexx+1;
+    output[indexx] = 2520;
+    indexx=indexx+1;
+    int row = sizeof(line) / sizeof(line[0]);
+    
+    for (int i=1;i<=row;i++){
+        output [indexx] = line[i][0]; //save point
+        indexx=indexx+1;
+        output [indexx] = line[i][1];
+        indexx=indexx+1;
+    }
+    //add end of line
+    output[indexx]=2510; //%lift pen
+    indexx=indexx+1;
+    output[indexx]=2510;
+    indexx=indexx+1;
+}
+
+
+void FlipColumn(int **array, int column, int rows)
+{
+    // Flip column 'column' of an array that has n rows.
+    for (int row = 0; row < rows/2; row++)
+    {
+        swap(array[row]+column, array[rows-1-row]+column);
+    }
+}
+
+void VFlipArray(int **array, int columns, int rows)
+{
+    for (int column = 0; column < columns; column++)
+    {
+        FlipColumn(array, column, rows);
+    }
+}
