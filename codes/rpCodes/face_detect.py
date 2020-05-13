@@ -12,6 +12,7 @@ from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 import xml.etree.ElementTree
 import hmac,hashlib
 import requests
+from numpy import asarray
 
 #########################################################################
 #Face Detection
@@ -24,7 +25,8 @@ stream = io.BytesIO()
 #Here you can also specify other parameters (e.g.:rotate the image)
 with picamera.PiCamera() as camera:
     camera.resolution = (3280, 2464)
-    camera.capture(stream, format='jpeg')
+    camera.capture(stream, format='jpeg', quality=100)
+    camera.close()
     print ('CAPTURED')
 
 #Convert the picture into a numpy array
@@ -128,19 +130,25 @@ else:
 
 #image_filtered = cv2.bilateralFilter(image,5,30,30)
 #image_gray_filtered = cv2.bilateralFilter(image_gray,7,50,50)
-cropped_image_filtered = cv2.bilateralFilter(cropped_image,20,10,10)
+cropped_image_filtered = cv2.bilateralFilter(cropped_image,40,10,10)
 #cropped_image_gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
 #cropped_image_gray_filtered = cv2.bilateralFilter(cropped_image_gray,7,50,50)
 
-scale_percent = 22 # percent of original size
+scale_percent = 20 # percent of original size
 width = int(cropped_image_filtered.shape[1] * scale_percent / 100)
 height = int(cropped_image_filtered.shape[0] * scale_percent / 100)
 dim = (width, height)
 cropped_image_filtered = cv2.resize(cropped_image_filtered, dim, interpolation = cv2.INTER_AREA)
 
+cropped_edges_50_100 = cv2.Canny(cropped_image_filtered,300,400,apertureSize=5,L2gradient=True)
 
-cropped_edges_50_100 = cv2.Canny(cropped_image_filtered,45,55)
-ret,cropped_edges_50_100_inverted = cv2.threshold(cropped_edges_50_100,127,255,cv2.THRESH_BINARY_INV)
+
+ret,cropped_edges_50_100_inverted = cv2.threshold(cropped_edges_50_100,100,255,cv2.THRESH_BINARY_INV)
+#cropped_edges_50_100 = cv2.medianBlur(cropped_edges_50_100,5)
+#cropped_edges_50_100 = ~cropped_edges_50_100
+#cropped_edges_50_100_inverted = cv2.adaptiveThreshold(cropped_edges_50_100,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+
+
 
 width = 720
 height = 1050
@@ -149,6 +157,8 @@ cropped_edges_50_100_inverted = cv2.resize(cropped_edges_50_100_inverted, dim, i
 cv2.imwrite('images/cropped_edges_50_100' + '.jpg', cropped_edges_50_100_inverted)
 
 
+data = asarray(cropped_edges_50_100_inverted)
+numpy.savetxt("test.csv", data, delimiter=",", fmt='%d' )
 '''
 # another implementation
 def auto_canny(image,sigma):
