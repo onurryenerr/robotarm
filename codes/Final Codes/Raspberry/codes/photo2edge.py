@@ -134,24 +134,27 @@ cv2.imwrite('../images/crop' + '.jpg', cropped_image)
 #image_gray_filtered = cv2.bilateralFilter(image_gray,7,50,50)
 #cropped_image_filtered = cv2.bilateralFilter(cropped_image,60,10,10)
 
+
 grayscale = cv2.cvtColor(cropped_image,cv2.COLOR_BGR2GRAY)
 
 
 #cropped_image_gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
 #cropped_image_gray_filtered = cv2.bilateralFilter(cropped_image_gray,7,50,50)
 
+print(grayscale.shape[1])
 
-scale_percent = 17 # percent of original size
+scale_percent = 17 * 1500 / grayscale.shape[1] # percent of original size. automatic dist. calibration
 width = int(grayscale.shape[1] * scale_percent / 100)
 height = int(grayscale.shape[0] * scale_percent / 100)
 dim = (width, height)
 scaled_down = cv2.resize(grayscale, dim, interpolation = cv2.INTER_AREA)
 
-filtered = cv2.GaussianBlur(scaled_down,(5,5),0)
+#filtered = cv2.GaussianBlur(scaled_down,(5,5),0)
+filtered = cv2.bilateralFilter(scaled_down,20,10,120)
 cv2.imwrite('../images/filter' + '.jpg', filtered)
 
 edge = cv2.Canny(filtered,2250,2250,apertureSize=7,L2gradient=True)
-ret,inverted = cv2.threshold(edge,220,255,cv2.THRESH_BINARY_INV)
+ret,inverted = cv2.threshold(edge,250,255,cv2.THRESH_BINARY_INV)
 #cropped_edges_50_100 = cv2.medianBlur(cropped_edges_50_100,5)
 #cropped_edges_50_100 = ~cropped_edges_50_100
 #cropped_edges_50_100_inverted = cv2.adaptiveThreshold(cropped_edges_50_100,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
