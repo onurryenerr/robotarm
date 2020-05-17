@@ -37,8 +37,8 @@ image = cv2.imdecode(buff, 1)
 image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
 
 #Load a cascade file for detecting faces
-haar_face_cascade = cv2.CascadeClassifier('/home/pi/Desktop/haarcascade.xml') #haar_cascade
-lbp_face_cascade = cv2.CascadeClassifier('/home/pi/Desktop/lbpcascade.xml') #lbp_cascade
+haar_face_cascade = cv2.CascadeClassifier('/home/pi/Desktop/codes/haarcascade.xml') #haar_cascade
+lbp_face_cascade = cv2.CascadeClassifier('/home/pi/Desktop/codes/lbpcascade.xml') #lbp_cascade
 
 #Convert to grayscale
 image_gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -143,17 +143,17 @@ grayscale = cv2.cvtColor(cropped_image,cv2.COLOR_BGR2GRAY)
 
 print(grayscale.shape[1])
 
-scale_percent = 17 * 1500 / grayscale.shape[1] # percent of original size. automatic dist. calibration
+scale_percent = 18 * 1500 / grayscale.shape[1] # percent of original size. automatic dist. calibration
 width = int(grayscale.shape[1] * scale_percent / 100)
 height = int(grayscale.shape[0] * scale_percent / 100)
 dim = (width, height)
 scaled_down = cv2.resize(grayscale, dim, interpolation = cv2.INTER_AREA)
 
 #filtered = cv2.GaussianBlur(scaled_down,(5,5),0)
-filtered = cv2.bilateralFilter(scaled_down,20,10,120)
+filtered = cv2.bilateralFilter(scaled_down,20,15,400)
 cv2.imwrite('../images/filter' + '.jpg', filtered)
 
-edge = cv2.Canny(filtered,2250,2250,apertureSize=7,L2gradient=True)
+edge = cv2.Canny(filtered,2000,3000,apertureSize=7,L2gradient=True)
 ret,inverted = cv2.threshold(edge,250,255,cv2.THRESH_BINARY_INV)
 #cropped_edges_50_100 = cv2.medianBlur(cropped_edges_50_100,5)
 #cropped_edges_50_100 = ~cropped_edges_50_100

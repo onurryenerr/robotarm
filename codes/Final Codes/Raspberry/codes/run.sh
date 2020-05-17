@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/pi/Desktop/Project3/codes
+cd /home/pi/Desktop/codes
 
 file="../images"
 if [ -d "$file" ]
@@ -31,8 +31,18 @@ python XYToImage.py
 echo "Transformer from XY to AB started"
 ./transformer.out
 
+file="../images/fotoxy.jpg"
+if [ -f "$file" ]
+then
+	echo "$Success"
+	python3 previewer.py&
+fi
+
+echo "Transformer from XY to AB started"
+./transformer.out
+
 echo "Serial communication to Arduino started"
 #python3 serialComm.py
 
-sleep 5
-#exec "./run.sh"
+sleep 10
+exec "./run.sh"
