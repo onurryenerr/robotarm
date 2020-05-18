@@ -23,6 +23,7 @@ else
 	exec "./run.sh"
 fi
 
+#gcc edge2xy.c -lm -o edge2xy.out
 echo "Edge to XY lines started"
 ./edge2xy.out
 

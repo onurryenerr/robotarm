@@ -10,7 +10,7 @@
 //parameters to modify
 #define  width 1050
 #define  height 720
-const int minLineLen = 19;
+const int minLineLen = 12;
 const int minBlackToBegin = 9;
 const int minBlackToCont = 1;
 const int penTip = 1; 
@@ -116,12 +116,12 @@ int main (void)
   int numOfReductions = 1;
   int flipFlag = 0;
   int foundFlag;
-  int x0,y0,k,distMin,distMinNum,length,cOL;
+  int xEnd,yEnd,xBeg,yBeg,k,distMin,distMinNum,length,cOL;
   int dist;
   while (numOfReductions > 0) {
     memset(&lines_connected[0][0][0], 0, 2000*20000*2 * sizeof(short int));
     numOfReductions = 0;
-    flipFlag = 0;
+    flipFlag = 0; //0 - end to beg; 1 - end to end; 2 - beg to beg; 3 - beg to end
     memset(linesWaiting, 1, 2000);
     for(i=1;i<=countOfLines(lines);i++){ //after the lines in lines matrix, the new line should indicate the end
         if (linesWaiting[i-1] == 0){
@@ -131,14 +131,16 @@ int main (void)
         linesWaiting[i-1] = 0;
         foundFlag = 0;
         length = lengthOfLine(lines[i-1]);
-        x0 = lines[i-1][length-1][0]; //get end coordinates
-        y0 = lines[i-1][length-1][1];
+        xEnd = lines[i-1][length-1][0]; //get end coordinates
+        yEnd = lines[i-1][length-1][1];
+        xBeg = lines[i-1][0][0]; //get beginning coordinates
+        yBeg = lines[i-1][0][1];
         cOL = countOfLines(lines);
         for (k = i+1; k<=cOL; k++) {
           distMin = 2147483647; //INT_MAX
           if (linesWaiting[k-1] == 1){           
-            if ((abs(lines[k-1][0][0]-x0)<=maxConnectionRange) && (abs(lines[k-1][0][1]-y0)<=maxConnectionRange)){
-              dist = distCalc (lines[k-1][0][0],x0,lines[k-1][0][1],y0);
+            if ((abs(lines[k-1][0][0]-xEnd)<=maxConnectionRange) && (abs(lines[k-1][0][1]-yEnd)<=maxConnectionRange)){
+              dist = distCalc (lines[k-1][0][0],xEnd,lines[k-1][0][1],yEnd);
               if (dist<distMin){                
                 distMin = dist;
                 distMinNum = k;
@@ -146,15 +148,36 @@ int main (void)
                 foundFlag = 1;
               }
             }
-            else if((abs(lines[k-1][lengthOfLine(lines[k-1])-1][0]-x0)<=maxConnectionRange) && (abs(lines[k-1][lengthOfLine(lines[k-1])-1][1]-y0)<=maxConnectionRange)){
-              dist = distCalc (lines[k-1][lengthOfLine(lines[k-1])-1][0],x0,lines[k-1][lengthOfLine(lines[k-1])-1][1],y0);
+            else if((abs(lines[k-1][lengthOfLine(lines[k-1])-1][0]-xEnd)<=maxConnectionRange) && (abs(lines[k-1][lengthOfLine(lines[k-1])-1][1]-yEnd)<=maxConnectionRange)){
+              dist = distCalc (lines[k-1][lengthOfLine(lines[k-1])-1][0],xEnd,lines[k-1][lengthOfLine(lines[k-1])-1][1],yEnd);
               if (dist<distMin){
                 distMin = dist;
                 distMinNum = k;
                 flipFlag = 1; // flip
                 foundFlag = 1;
               }
-            }             
+            }
+            
+            else if((abs(lines[k-1][0][0]-xBeg)<=maxConnectionRange) && (abs(lines[k-1][0][1]-yBeg)<=maxConnectionRange)){
+              dist = distCalc (lines[k-1][0][0],xBeg,lines[k-1][0][1],yBeg);
+              if (dist<distMin){
+                distMin = dist;
+                distMinNum = k;
+                flipFlag = 2; // flip
+                foundFlag = 1;
+              }
+            }
+            
+            else if((abs(lines[k-1][lengthOfLine(lines[k-1])-1][0]-xBeg)<=maxConnectionRange) && (abs(lines[k-1][lengthOfLine(lines[k-1])-1][1]-yBeg)<=maxConnectionRange)){
+              dist = distCalc (lines[k-1][lengthOfLine(lines[k-1])-1][0],xBeg,lines[k-1][lengthOfLine(lines[k-1])-1][1],yBeg);
+              if (dist<distMin){
+                distMin = dist;
+                distMinNum = k;
+                flipFlag = 3; // flip
+                foundFlag = 1;
+              }
+            }    
+                         
           }
         }
         if (foundFlag == 0)
@@ -162,6 +185,13 @@ int main (void)
         else{
           if(flipFlag == 1){
             flip(lines[distMinNum-1]);
+            }
+          else if(flipFlag == 2){
+            flip(lines[i-1]);
+            }
+          else if(flipFlag == 3){
+            flip(lines[distMinNum-1]);
+            flip(lines[i-1]);
             }
           concLines(lines[i-1],lines[distMinNum-1]); //concLines concatanates src to dst
           copyLine(lines_connected[i-numOfReductions-1],lines[i-1],0); 
